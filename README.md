@@ -25,7 +25,7 @@
 
 ## 预览效果
 
-在线演示：[https://preview.tangly1024.com/](https://preview.tangly1024.com/) ，项目支持多主题切换，没找到喜欢的主题？[贡献](/CONTRIBUTING.md)一个吧~
+在线演示：[https://preview.tangly1024.com/](https://preview.tangly1024.com/) ，项目支持多主题切换，没找到喜欢的主题？[贡献](/CONTRIBUTING.md)一个吧😊
 
 | Next | Medium | Hexo | Fukasawa |
 |--|--|--|--|
