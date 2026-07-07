@@ -2,7 +2,7 @@ const { THEME } = require('./blog.config')
 const fs = require('node:fs')
 const path = require('node:path')
 const BLOG = require('./blog.config')
-const { extractLangPrefix } = require('./lib/utils/pageId')
+const { extractLangPrefix, getLocaleAliases } = require('./lib/utils/pageId')
 const { isExport } = require('./lib/utils/buildMode')
 
 // 打包时是否分析代码
@@ -16,16 +16,23 @@ const themes = scanSubdirectories(path.resolve(__dirname, 'themes'))
 const locales = (function () {
   // 根据BLOG_NOTION_PAGE_ID 检查支持多少种语言数据.
   // 支持如下格式配置多个语言的页面id xxx,zh:xxx,en:xxx
-  const langs = [BLOG.LANG]
+  const langs = []
+  const addLocale = locale => {
+    getLocaleAliases(locale).forEach(alias => {
+      if (alias && !langs.includes(alias)) {
+        langs.push(alias)
+      }
+    })
+  }
+
+  addLocale(BLOG.LANG)
   if (BLOG.NOTION_PAGE_ID.indexOf(',') > 0) {
     const siteIds = BLOG.NOTION_PAGE_ID.split(',')
     for (const siteId of siteIds) {
       const prefix = extractLangPrefix(siteId)
       // 如果包含前缀 例如 zh , en 等
       if (prefix) {
-        if (!langs.includes(prefix)) {
-          langs.push(prefix)
-        }
+        addLocale(prefix)
       }
     }
   }
@@ -188,33 +195,43 @@ const nextConfig = {
       if (BLOG.NOTION_PAGE_ID.indexOf(',') > 0) {
         const siteIds = BLOG.NOTION_PAGE_ID.split(',')
         const langs = []
+        const addLocale = locale => {
+          getLocaleAliases(locale).forEach(alias => {
+            if (alias && !langs.includes(alias)) {
+              langs.push(alias)
+            }
+          })
+        }
+
         for (const siteId of siteIds) {
           const prefix = extractLangPrefix(siteId)
           // 如果包含前缀 例如 zh , en 等
           if (prefix) {
-            langs.push(prefix)
+            addLocale(prefix)
           }
           console.log('[Locales]', siteId)
         }
 
         // 映射多语言
         // 示例： source: '/:locale(zh|en)/:path*' ; :locale() 会将语言放入重写后的 `?locale=` 中。
-        langsRewrites.push(
-          {
-            source: `/:locale(${langs.join('|')})/:path*`,
-            destination: '/:path*'
-          },
-          // 匹配没有路径的情况，例如 [domain]/zh 或 [domain]/en
-          {
-            source: `/:locale(${langs.join('|')})`,
-            destination: '/'
-          },
-          // 匹配没有路径的情况，例如 [domain]/zh/ 或 [domain]/en/
-          {
-            source: `/:locale(${langs.join('|')})/`,
-            destination: '/'
-          }
-        )
+        if (langs.length > 0) {
+          langsRewrites.push(
+            {
+              source: `/:locale(${langs.join('|')})/:path*`,
+              destination: '/:path*'
+            },
+            // 匹配没有路径的情况，例如 [domain]/zh 或 [domain]/en
+            {
+              source: `/:locale(${langs.join('|')})`,
+              destination: '/'
+            },
+            // 匹配没有路径的情况，例如 [domain]/zh/ 或 [domain]/en/
+            {
+              source: `/:locale(${langs.join('|')})/`,
+              destination: '/'
+            }
+          )
+        }
       }
 
       return [

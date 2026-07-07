@@ -337,7 +337,7 @@ const Layout404 = props => {
       if (isBrowser) {
         const article = document.querySelector('#article-wrapper #notion-article')
         if (!article) {
-          router.push('/').then(() => {
+          router.push('/', undefined, { locale: router.locale }).then(() => {
             // console.log('找不到页面', router.asPath)
           })
         }
