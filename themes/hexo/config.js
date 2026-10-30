@@ -1,6 +1,6 @@
 const CONFIG = {
   HEXO_HOME_BANNER_ENABLE: true,
-  HEXO_HOME_BANNER_IMAGE: '/images/generated/lin-liu-personal-studio-dark-v3.png', // 首页背景图
+  HEXO_HOME_BANNER_IMAGE: '/images/generated/lin-liu-personal-studio-dark-v7.png', // 首页背景图
   // 3.14.1以后的版本中，欢迎语在blog.config.js中配置，用英文逗号','隔开多个。
   HEXO_HOME_BANNER_GREETINGS: [
     'Hi，我是一个程序员',
